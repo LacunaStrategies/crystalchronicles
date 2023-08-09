@@ -11,10 +11,10 @@ export default withAuth(
             }
         },
         pages: {
-            signIn: '/',
+            signIn: '/sign-in',
         },
     }
 )
 
 // This middleware will only restrict paths defined in the matcher array below
-export const config = { matcher: ["/admin/:path*"] }
+export const config = { matcher: ["/app/:path*"] }
