@@ -1,5 +1,6 @@
 // ** NextAuth Imports
 import NextAuth, { NextAuthOptions } from "next-auth"
+import Facebook from "next-auth/providers/facebook"
 import Github from "next-auth/providers/github"
 
 // ** MongoDB Imports
@@ -12,6 +13,10 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.GITHUB_ID || '',
             clientSecret: process.env.GITHUB_SECRET || '',
         }),
+        Facebook({
+            clientId: process.env.FACEBOOK_ID || '',
+            clientSecret: process.env.FACEBOOK_SECRET || '',
+        })
     ],
     // @ts-expect-error
     adapter: MongoDBAdapter(clientPromise),
