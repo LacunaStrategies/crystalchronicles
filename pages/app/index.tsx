@@ -1,12 +1,28 @@
-import { signOut } from "next-auth/react";
+import AdminLayout from "@/layouts/AdminLayout"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
 
 export default function AppHome() {
     return (
-        <main className='relative flex min-h-screen flex-col items-center justify-center'>
-            <h1>App Home</h1>
-            <div>
-                <button onClick={() => signOut({ callbackUrl: '/sign-in' })}>Sign Out</button>
-            </div>
-        </main>
+        <AdminLayout>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Card Title</CardTitle>
+                    <CardDescription>Card Description</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p>Card Content</p>
+                </CardContent>
+                <CardFooter>
+                    <p>Card Footer</p>
+                </CardFooter>
+            </Card>
+        </AdminLayout>
     )
 }
