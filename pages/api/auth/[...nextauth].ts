@@ -4,8 +4,8 @@ import Facebook from "next-auth/providers/facebook"
 import Github from "next-auth/providers/github"
 
 // ** MongoDB Imports
-import { MongoDBAdapter } from "@auth/mongodb-adapter"
-import clientPromise from "@/lib/mongodb/client"
+// import { MongoDBAdapter } from "@auth/mongodb-adapter"
+// import clientPromise from "@/lib/mongodb/client"
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -18,8 +18,8 @@ export const authOptions: NextAuthOptions = {
             clientSecret: process.env.FACEBOOK_SECRET || '',
         })
     ],
-    // @ts-expect-error
-    adapter: MongoDBAdapter(clientPromise),
+    // // @ts-expect-error
+    // adapter: MongoDBAdapter(clientPromise),
     session: {
         strategy: 'jwt',
     },
