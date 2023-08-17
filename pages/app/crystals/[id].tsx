@@ -59,7 +59,7 @@ export const CrystalPage = () => {
                 </div>
                 <div>
                     <button
-                        className="transition-all duration-300 bg-neutral-500 hover:bg-neutral-700 text-white py-1.5 px-5 rounded-md disabled:bg-neutral-700/50"
+                        className="transition-all duration-300 bg-[#130883] hover:bg-[#130883]/80 text-white py-1.5 px-5 rounded-md disabled:bg-[#130883]/40"
                         onClick={() => addToCollection(crystalData._id)}
                         disabled={addingToCollection}
                     >{addingToCollection ? 'Please Wait...' : '+ Add to Collection'}</button>

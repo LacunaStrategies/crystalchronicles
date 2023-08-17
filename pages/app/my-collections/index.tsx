@@ -2,6 +2,7 @@ import AdminLayout from "@/layouts/AdminLayout"
 import Image from "next/image"
 import Link from "next/link"
 import mysticBag from '@/public/assets/images/mystic-drawstring-bag.webp'
+import mysticPlus from '@/public/assets/images/mystic-plus-icon.webp'
 
 interface Props { }
 
@@ -28,6 +29,12 @@ export const Crystals = () => {
     return (
         <AdminLayout pageName="My Collections">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="flex items-center justify-center">
+                    <button>
+                        <Image src={mysticPlus} width={120} height={120} alt="Mystic Plus Symbol" className="mb-4" />
+                        <div className="w-full text-center">Add New Collection</div>
+                    </button>
+                </div>
                 {
                     myCollections.map(collection => (
                         <div key={collection.name}>

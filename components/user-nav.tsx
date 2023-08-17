@@ -28,7 +28,7 @@ const UserNav = () => {
             <DropdownMenuTrigger>
                 <Avatar>
                     <AvatarImage src={''} />
-                    <AvatarFallback className="bg-fuchsia-800 text-white">LS</AvatarFallback>
+                    <AvatarFallback className="bg-[#0f0344] text-white">LS</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
