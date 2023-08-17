@@ -72,6 +72,7 @@ export const CrystalPage = () => {
                     alt={crystalData.name}
                     width={400}
                     height={400}
+                    priority
                     className="mx-auto border shadow shadow-black mb-2"
                 />
                 <h1 className="text-center text-medium text-4xl uppercase">{crystalData?.name}</h1>
