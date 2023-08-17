@@ -18,15 +18,6 @@ export const Crystals = () => {
         zodiac: ''
     })
 
-    useEffect(() => {
-        const filterCrystals = () => {
-            setFilteredCrystals(crystals)
-            console.log(filteredCrystals)
-        }
-        filterCrystals()
-    }, [filters])
-
-
     return (
         <AdminLayout pageName="Search Crystals">
             {/* <div className="py-8 space-x-4">
@@ -106,6 +97,7 @@ export const Crystals = () => {
                                         alt={crystal.name}
                                         height={250}
                                         width={250}
+                                        priority
                                         className="transition-all duration-300 rounded-2xl mx-auto mb-2 scale-95 group-hover:scale-100"
                                     />
                                     <span className="inline-block w-full text-center">

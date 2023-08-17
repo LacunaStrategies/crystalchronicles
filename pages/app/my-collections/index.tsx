@@ -27,12 +27,12 @@ const myCollections = [
 export const Crystals = () => {
     return (
         <AdminLayout pageName="My Collections">
-            <div className="grid grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {
                     myCollections.map(collection => (
-                        <div>
+                        <div key={collection.name}>
                             <Link href={`/app/my-collections/${collection._id}`} className="block transition-all duration-300 scale-90 hover:scale-95">
-                                <Image src={mysticBag} alt="Mystic Bag" />
+                                <Image src={mysticBag} alt="Mystic Bag" width={500} height={480} priority />
                                 <div className="uppercase text-xl text-center">{collection.name}</div>
                             </Link>
                         </div>
