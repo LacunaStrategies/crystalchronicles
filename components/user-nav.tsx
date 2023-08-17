@@ -28,7 +28,7 @@ const UserNav = () => {
             <DropdownMenuTrigger>
                 <Avatar>
                     <AvatarImage src={''} />
-                    <AvatarFallback>LS</AvatarFallback>
+                    <AvatarFallback className="bg-fuchsia-800 text-white">LS</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
@@ -40,7 +40,7 @@ const UserNav = () => {
                             <span>Profile</span>
                         </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    {/* <DropdownMenuItem>
                         <CreditCard className="mr-2 h-4 w-4" />
                         <span>Billing</span>
                     </DropdownMenuItem>
@@ -51,7 +51,7 @@ const UserNav = () => {
                     <DropdownMenuItem>
                         <LifeBuoy className="mr-2 h-4 w-4" />
                         <span>Support</span>
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem

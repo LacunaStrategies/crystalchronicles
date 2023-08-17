@@ -25,14 +25,12 @@ export default function SignIn() {
         <main className='relative flex min-h-screen flex-col items-center justify-center'>
             <div className="p-8 w-full">
                 {/* Logo */}
-                <div className="mb-8 text-center">
-                    CrystalChronicles
+                <div className="mb-8 text-center font-bold text-transparent text-7xl bg-clip-text bg-gradient-to-br from-fuchsia-800 to-fuchsia-300">
+                    Crystal Chronicles
                 </div>
 
                 {/* Form */}
                 <div className="w-full max-w-sm mx-auto">
-                    <h1 className="font-bold text-3xl mb-6 text-center">Sign In</h1>
-
                     <div className="flex flex-col justify-center items-center">
                         <button
                             disabled={loading}
@@ -52,12 +50,12 @@ export default function SignIn() {
                 <div className="text-center text-sm mt-12">
                     <a
                         href="#"
-                        className="transition duration-300 text-cyan-600 mx-2"
+                        className="transition duration-300 text-fuchsia-700 hover:text-fuchsia-500 mx-2"
                     >Terms of Use</a>
                     {' '}|{' '}
                     <a
                         href="#"
-                        className="transition duration-300 text-cyan-600 mx-2"
+                        className="transition duration-300 text-fuchsia-700 hover:text-fuchsia-500 mx-2"
                     >Privacy Policy</a>
                 </div>
             </div>
