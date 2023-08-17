@@ -1,7 +1,9 @@
-import SideNav from "@/components/side-nav"
-import { useState } from "react"
+import NavMenu from "@/components/nav-menu"
 import UserNav from "@/components/user-nav"
 
+import { Menu, X } from "lucide-react"
+
+import { useState } from "react"
 
 interface Props {
     pageName?: string
@@ -26,34 +28,32 @@ const AdminLayout: React.FC<Props> = ({ children, pageName }) => {
                 document.body.style.overflow = 'auto'
                 setShowMobileNav(false)
         }
-
     }
 
     return (
-        <>
-            {/* Side Nav */}
-            <SideNav
-                showMobileNav={showMobileNav}
+        <div className="h-full flex flex-col container mx-auto px-4">
+            <header className="flex justify-between items-center w-full py-6">
+                <div className="flex items-center">
+                    <button
+                        className="inline-block"
+                        onClick={() => handleNavToggle('show')}
+                    >
+                        <Menu aria-hidden="true" />
+                    </button>
+                    <span className="uppercase text-xs font-semibold ml-2">{pageName}</span>
+                </div>
+                <div className="ml-auto">
+                    <UserNav />
+                </div>
+            </header>
+            <NavMenu 
                 handleNavToggle={handleNavToggle}
+                showMobileNav={showMobileNav}
             />
-
-            <div className={`transition-all duration-300 ease-in-out h-full flex flex-col container mx-auto px-4 ${showMobileNav ? 'translate-x-64 blur-sm pointer-events-none lg:translate-x-0 lg:blur-none lg:pointer-events-auto' : 'translate-x-0'} lg:max-w-[calc(100%-16rem)] lg:ml-auto lg:mr-0 2xl:max-w[calc(1400px-16rem)]`}>
-                <header className="transition-all duration-300 ease-in-out flex justify-between items-center w-full py-6">
-                    <div>
-                        <span className="ml-12 uppercase text-xs font-semibold lg:ml-0">{pageName}</span>
-                    </div>
-                    <div className="ml-auto">
-                        <UserNav />
-                    </div>
-                </header>
-                <main className="transition-all duration-300 ease-in-out grow">
-                    {children}
-                </main>
-                <footer className="">
-
-                </footer>
-            </div>
-        </>
+            <main className="grow">
+                {children}
+            </main>
+        </div>
     )
 }
 

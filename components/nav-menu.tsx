@@ -1,4 +1,5 @@
 import Link from 'next/link'
+
 import { useRouter } from 'next/router'
 import {
     Gem,
@@ -10,19 +11,6 @@ import {
     X
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
-
-interface Props {
-    showMobileNav: boolean
-    handleNavToggle: (toggle: 'show' | 'hide') => void
-}
-
-interface NavItem {
-    name: string
-    icon: React.ReactNode
-    path: string
-    disabled?: boolean
-    onClick?: () => Promise<undefined>
-}
 
 const navigation: NavItem[] = [
     {
@@ -53,31 +41,40 @@ const navigation: NavItem[] = [
     },
 ]
 
-const SideNav: React.FC<Props> = ({ handleNavToggle, showMobileNav }) => {
+interface NavItem {
+    name: string
+    icon: React.ReactNode
+    path: string
+    disabled?: boolean
+    onClick?: () => Promise<undefined>
+}
+
+interface Props {
+    showMobileNav: boolean
+    handleNavToggle: (toggle: 'show' | 'hide') => void
+}
+
+const NavMenu: React.FC<Props> = ({ handleNavToggle, showMobileNav }) => {
 
     const router = useRouter()
 
     return (
-        <div className={`transition-all duration-300 ease-in-out fixed z-30 top-0 left-0 ${showMobileNav ? 'translate-x-0' : '-translate-x-64 lg:translate-x-0'} bottom-0 px-5 w-64 bg-gradient-to-br from-fuchsia-950 to-fuchsia-700 text-white`}>
-            <button className="absolute top-8 -right-12 z-50 text-black lg:hidden">
-                {
-                    showMobileNav ? (
-                        <X onClick={() => handleNavToggle('hide')} />
-                    ) : (
-                        <Menu onClick={() => handleNavToggle('show')} />
-                    )
-                }
+        <div className={`z-50 transition-all duration-300 fixed top-0 left-0 bottom-0 flex flex-col items-center w-full bg-gradient-to-br from-fuchsia-950 to-fuchsia-700 text-white ${showMobileNav ? 'translate-y-0' : '-translate-y-full'}`}>
+            <button
+                className="absolute top-6 right-6"
+                onClick={() => handleNavToggle('hide')}
+            >
+                <X aria-hidden="true" />
             </button>
-
             {/* Logo */}
-            <div className="text-center border-b border-b-white">
-                <Link
-                    href="/app"
-                    className="block uppercase text-center py-6 leading-10"
-                >Crystal Chronicles</Link>
-            </div>
-            {/* Nav Menu */}
-            <div>
+            <div className="my-auto">
+                <div className="text-center border-b border-b-white">
+                    <Link
+                        href="/app"
+                        className="block uppercase text-center py-6 leading-10"
+                    >Crystal Chronicles</Link>
+                </div>
+                {/* Nav Menu */}
                 <nav className="py-6">
                     <ul>
                         {
@@ -110,6 +107,7 @@ const SideNav: React.FC<Props> = ({ handleNavToggle, showMobileNav }) => {
                                     <li key={item.name}>
                                         <Link
                                             href={item.path}
+                                            onClick={() => handleNavToggle('hide')}
                                             className={`transition duration-300 flex items-center uppercase ${router.asPath === item.path ? 'bg-white text-fuchsia-950' : 'hover:bg-white/25'} text-xs leading-8 py-2 px-4 mb-3 rounded-full disabled:text-white/50`}
                                         >
                                             {item.icon}
@@ -126,4 +124,4 @@ const SideNav: React.FC<Props> = ({ handleNavToggle, showMobileNav }) => {
     )
 }
 
-export default SideNav
+export default NavMenu

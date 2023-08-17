@@ -22,12 +22,13 @@ export default function SignIn() {
     }
 
     return (
-        <main className='relative flex min-h-screen flex-col items-center justify-center'>
-            <div className="p-8 w-full">
+        <main className="relative flex flex-col min-h-screen items-center justify-center">
+            <div className="px-4">
+               
                 {/* Logo */}
-                <div className="mb-8 text-center font-bold text-transparent text-7xl bg-clip-text bg-gradient-to-br from-fuchsia-800 to-fuchsia-300">
+                <h1 className="font-bold text-center text-transparent text-5xl bg-clip-text bg-gradient-to-br from-fuchsia-800 to-fuchsia-300 mb-8 md:text-7xl">
                     Crystal Chronicles
-                </div>
+                </h1>
 
                 {/* Form */}
                 <div className="w-full max-w-sm mx-auto">
