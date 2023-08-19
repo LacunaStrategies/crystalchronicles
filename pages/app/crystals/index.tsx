@@ -18,9 +18,41 @@ export const Crystals = () => {
         zodiac: ''
     })
 
+    const filterCrystals = () => {
+
+        // If no filters are set, return empty array
+        if (filters.search === '' && filters.chakra === '' && filters.element === '' && filters.zodiac === '')
+            return []
+
+        // Return a filtered array
+        const crystalsToReturn = crystals.filter(
+            // If crystal fails any of the filter checks, exclude it from the array
+            (crystal) => {
+                let includeCrystal = true
+
+                if (filters.search !== '' && !crystal.name.includes(filters.search)) includeCrystal = false
+                if (filters.chakra !== '' && !crystal.chakras?.includes(filters.chakra)) includeCrystal = false
+                if (filters.element !== '' && !crystal.elements?.includes(filters.element)) includeCrystal = false
+                if (filters.zodiac !== '' && !crystal.zodiacs?.includes(filters.zodiac)) includeCrystal = false
+
+                return includeCrystal
+            }
+        )
+
+        return crystalsToReturn
+
+    }
+
+    useEffect(() => {
+        setFilteredCrystals(filterCrystals())
+    }, [filters, crystals])
+
     return (
         <AdminLayout pageName="Search Crystals">
-            {/* <div className="py-8 space-x-4">
+            <div>
+                <pre>{JSON.stringify(filteredCrystals, null, 4)}</pre>
+            </div>
+            <div className="py-8 space-x-4">
                 <select
                     name="chakra"
                     id="chakra"
@@ -77,7 +109,7 @@ export const Crystals = () => {
                 >
                     Clear Filters
                 </button>
-            </div> */}
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-8">
                 {
                     crystals.map((crystal) => {
