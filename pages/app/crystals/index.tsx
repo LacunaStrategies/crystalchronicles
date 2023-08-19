@@ -5,8 +5,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from 'react'
 
-interface Props { }
-
 export const Crystals = () => {
 
     // State Variables
@@ -19,7 +17,6 @@ export const Crystals = () => {
     })
 
     const filterCrystals = () => {
-
         // If no filters are set, return empty array
         if (filters.search === '' && filters.chakra === '' && filters.element === '' && filters.zodiac === '')
             return []
@@ -49,10 +46,15 @@ export const Crystals = () => {
 
     return (
         <AdminLayout pageName="Search Crystals">
-            <div>
-                <pre>{JSON.stringify(filteredCrystals, null, 4)}</pre>
-            </div>
             <div className="py-8 space-x-4">
+                <input
+                    type="text"
+                    name="search"
+                    id="search"
+                    onChange={(e) => setFilters({ ...filters, [e.target.name]: e.target.value })}
+                    value={filters.search}
+                    placeholder="Search by name..."
+                />
                 <select
                     name="chakra"
                     id="chakra"
