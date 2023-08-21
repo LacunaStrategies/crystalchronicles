@@ -1,5 +1,6 @@
 import AdminLayout from "@/layouts/AdminLayout"
 import { crystals, getCrystal } from "@/lib/mock/crystals"
+import { fakeInsert } from "@/lib/utils"
 import { Crystal } from "@/types/Crystal"
 import Image from "next/image"
 import Link from "next/link"
@@ -17,12 +18,6 @@ export const CrystalPage = () => {
 
     // Page Data :: This will actually be generated from GetStaticPaths and GetStaticParams when moved to DB
     const crystalData: Crystal | undefined = crystals.find(crystal => crystal._id === router.query.id)
-
-    const fakeInsert = (delay: number) => {
-        return new Promise(function (resolve) {
-            setTimeout(resolve, delay)
-        })
-    }
 
     /**
      * * Add To Collection

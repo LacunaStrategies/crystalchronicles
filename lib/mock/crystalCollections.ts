@@ -2,11 +2,6 @@ import { ICrystalCollection } from "@/types/CrystalCollection"
 
 export const crystalCollection: ICrystalCollection[] = [
     {
-        _id: "ccuid-1",
-        name: "All Crystals",
-        user_id: "1",
-    },
-    {
         _id: 'ccuid-2',
         name: 'Wish List',
         user_id: "1",
