@@ -1,3 +1,4 @@
+import { ModalAddToCollection } from "@/components/modals/add-to-collection"
 import AdminLayout from "@/layouts/AdminLayout"
 import { crystals, getCrystal } from "@/lib/mock/crystals"
 import { fakeInsert } from "@/lib/utils"
@@ -10,26 +11,12 @@ interface Props { }
 
 export const CrystalPage = () => {
 
-    // State Variables
-    const [addingToCollection, setAddingToCollection] = useState(false)
-
     // Hooks
     const router = useRouter()
+    const [showModal, setShowModal] = useState(false)
 
     // Page Data :: This will actually be generated from GetStaticPaths and GetStaticParams when moved to DB
     const crystalData: Crystal | undefined = crystals.find(crystal => crystal._id === router.query.id)
-
-    /**
-     * * Add To Collection
-     * @dev Adds crystal to user's collection of crystals
-     * @param id string
-     */
-    const addToCollection = async (id: string) => {
-        setAddingToCollection(true)
-        await fakeInsert(1500)
-        alert('This crystal has been added to your collection! Not really...we\'re not hooked up to the database yet. Bet it still feels nice, though! You can go check out the collection we created for you and pretend this one\'s in there now!')
-        setAddingToCollection(false)
-    }
 
     if (!crystalData)
         return (
@@ -55,9 +42,8 @@ export const CrystalPage = () => {
                 <div>
                     <button
                         className="transition-all duration-300 bg-[#130883] hover:bg-[#130883]/80 text-white py-1.5 px-5 rounded-md disabled:bg-[#130883]/40"
-                        onClick={() => addToCollection(crystalData._id)}
-                        disabled={addingToCollection}
-                    >{addingToCollection ? 'Please Wait...' : '+ Add to Collection'}</button>
+                        onClick={() => setShowModal(true)}
+                    >+ Add to Collection</button>
                 </div>
             </div>
 
@@ -114,6 +100,14 @@ export const CrystalPage = () => {
                             </ul>
                         </div>
                     </div>
+                )
+            }
+            {
+                showModal && (
+                    <ModalAddToCollection
+                        crystalData={crystalData}
+                        setShowModal={setShowModal}
+                    />
                 )
             }
         </AdminLayout>
