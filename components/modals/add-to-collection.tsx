@@ -1,18 +1,15 @@
-import { ICrystalCollection } from '@/types/CrystalCollection'
+import { ICollectionCheckbox, ICrystalCollection } from '@/types/CrystalCollection'
 import { X } from 'lucide-react'
 import { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { toast } from 'react-hot-toast'
 import Checkbox from '../ui/checkbox'
 import { Crystal } from '@/types/Crystal'
 
-interface ICollectionCheckbox extends ICrystalCollection {
-    checked: boolean
-}
-
 interface Props {
     crystalData: Crystal
     setShowModal: Dispatch<SetStateAction<boolean>>
 }
+
 export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModal }) => {
 
     const [collectionsCheckboxes, setCollectionsCheckboxes] = useState<ICollectionCheckbox[] | []>([])
@@ -57,30 +54,28 @@ export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModa
         )
     }
 
-    const selectAll = () => {
-        setCollectionsCheckboxes(collectionsCheckboxes.map(collection => ({ ...collection, checked: true })))
-    }
-    const unSelectAll = () => {
-        setCollectionsCheckboxes(collectionsCheckboxes.map(collection => ({ ...collection, checked: false })))
-    }
-
-    const handleModalClose = () => { }
-
     const handleAddToCollection = async () => {
         setProcessing(true)
 
-        // let json
-        // try {
-        //     const resp = await fetch('/api/crystals/addToCollection', {
-        //         method: 'POST',
-        //         body: JSON.stringify({ crystalData, collectionsCheckboxes })
-        //     })
-        //     json = await resp.json()
-        // } catch (error) {
-        //     console.error(error)
-        // }
+        let json
+        try {
+            const resp = await fetch('/api/crystals/addToCollection', {
+                method: 'POST',
+                body: JSON.stringify({ crystalData, collectionsCheckboxes })
+            })
+            json = await resp.json()
+        } catch (error) {
+            console.error(error)
+        }
+
+        if (json.success) {
+            toast.success('This crystal has been added to your collection(s)!')
+        } else {
+            toast.error('An unexpected error occurred!')
+        }
 
         setProcessing(false)
+        setShowModal(false)
 
     }
 

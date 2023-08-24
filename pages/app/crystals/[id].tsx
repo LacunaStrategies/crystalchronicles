@@ -1,13 +1,11 @@
 import { ModalAddToCollection } from "@/components/modals/add-to-collection"
 import AdminLayout from "@/layouts/AdminLayout"
-import { crystals, getCrystal } from "@/lib/mock/crystals"
-import { fakeInsert } from "@/lib/utils"
+import { crystals } from "@/lib/mock/crystals"
 import { Crystal } from "@/types/Crystal"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from 'next/router'
 import { useState } from "react"
-interface Props { }
 
 export const CrystalPage = () => {
 
