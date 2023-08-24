@@ -3,11 +3,12 @@ import Image from "next/image"
 import Link from "next/link"
 import mysticBag from '@/public/assets/images/mystic-drawstring-bag.webp'
 import mysticPlus from '@/public/assets/images/mystic-plus-icon.webp'
-import { crystalCollection } from "@/lib/mock/crystalCollections"
 import { ICrystalCollection } from "@/types/CrystalCollection"
 import { useState } from 'react'
 import { X, XCircle } from 'lucide-react'
 import { fakeInsert } from "@/lib/utils"
+import { useEffect } from 'react'
+import { toast } from "react-hot-toast"
 
 export const Crystals = () => {
 
@@ -16,7 +17,18 @@ export const Crystals = () => {
     const [newCollectionName, setNewCollectionName] = useState('')
     const [collectionToDelete, setCollectionToDelete] = useState<ICrystalCollection | null>(null)
     const [processing, setProcessing] = useState(false)
-    const [crystalCollectionState, setCrystalCollectionState] = useState(crystalCollection)
+    const [crystalCollections, setCrystalCollections] = useState<ICrystalCollection[] | []>([])
+
+    useEffect(() => {
+        const getUserCrystalCollection = async () => {
+            const resp = await fetch('/api/collections/getCollections', {
+                method: 'GET'
+            })
+            const respJson = await resp.json()
+            setCrystalCollections(respJson.data)
+        }
+        getUserCrystalCollection()
+    }, [])
 
     const handleModalClose = () => {
         setNewCollectionName('')
@@ -28,15 +40,31 @@ export const Crystals = () => {
         e.preventDefault()
 
         setProcessing(true)
-        await fakeInsert(2500)
 
-        const newCrystalCollectionState = [...crystalCollectionState]
-        newCrystalCollectionState.push({
-            _id: `ccuid-${Math.floor(Math.random() * 100)}`,
-            name: newCollectionName,
-            user_id: "1",
-        })
-        setCrystalCollectionState(newCrystalCollectionState)
+        let json
+
+        try {
+            const resp = await fetch('/api/collections/createCollection', {
+                method: 'POST',
+                body: JSON.stringify({ newCollectionName })
+            })
+            json = await resp.json()
+        } catch (error) {
+            console.error(error)
+        }
+
+        if (!json.success) {
+            toast.error(json.message)
+        } else {
+            const newCrystalCollections = [...crystalCollections]
+            newCrystalCollections.push({
+                _id: json.data.insertedId,
+                name: newCollectionName,
+                user_id: '',
+            })
+            setCrystalCollections(newCrystalCollections)
+            toast.success('Your new collection has been created successfully!')
+        }
 
         setProcessing(false)
         handleModalClose()
@@ -44,11 +72,26 @@ export const Crystals = () => {
 
     const handleDeleteCollection = async () => {
         setProcessing(true)
-        await fakeInsert(2500)
 
-        const newCrystalCollectionState = crystalCollectionState.filter(obj => obj._id !== collectionToDelete?._id)
-        console.log(newCrystalCollectionState)
-        setCrystalCollectionState(newCrystalCollectionState)
+        let json
+
+        try {
+            const resp = await fetch('/api/collections/deleteCollection', {
+                method: 'POST',
+                body: JSON.stringify({ crystalCollectionId: collectionToDelete?._id })
+            })
+            json = await resp.json()
+        } catch (error) {
+            console.error(error)
+        }
+
+        if (!json.success || !json.data.acknowledged) {
+            toast.error(`There was an error deleting the collection "${collectionToDelete?.name}". Please refresh the page and try again.`)
+        } else {
+            const newCrystalCollectionState = crystalCollections.filter(obj => obj._id !== collectionToDelete?._id)
+            setCrystalCollections(newCrystalCollectionState)
+            toast.success(`Collection "${collectionToDelete?.name}" was successfully deleted!`)
+        }
 
         setProcessing(false)
         handleModalClose()
@@ -73,9 +116,9 @@ export const Crystals = () => {
                     </Link>
                 </div>
                 {
-                    crystalCollectionState.map(collection => (
+                    crystalCollections.map(collection => (
                         <div
-                            key={collection.name}
+                            key={collection._id}
                             className="relative"
                         >
                             <Link href={`/app/my-collections/${collection._id}`} className="block transition-all duration-300 scale-90 hover:scale-95">
