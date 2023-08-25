@@ -6,8 +6,8 @@ import { ObjectId } from "mongodb"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../auth/[...nextauth]"
 
-import { Crystal } from "@/types/Crystal"
-import { ICollectionCheckbox, ICrystalCollection } from "@/types/CrystalCollection"
+import { ICrystal } from "@/types/Crystal"
+import { ICheckbox } from "@/types/CrystalCollection"
 
 export default async function createCollection(req: NextApiRequest, res: NextApiResponse) {
 
@@ -21,26 +21,22 @@ export default async function createCollection(req: NextApiRequest, res: NextApi
         case 'POST':
 
             const data = JSON.parse(req.body)
-            const crystalData: Crystal = data.crystalData
-            const collectionsCheckboxes: ICollectionCheckbox[] = data.collectionsCheckboxes
+            const { crystalData, checkboxes }: { crystalData: ICrystal, checkboxes: ICheckbox[] | [] } = data
 
             const client = await clientPromise
             const db = client.db(process.env.MONGODB_DB)
 
-            const collections = collectionsCheckboxes.map(collection => collection._id)
+            const collections = checkboxes.map(checkbox => checkbox.isChecked && (new ObjectId(checkbox.collectionId)))
 
-            const userCrystal = await db.collection('user_crystals').updateOne(
+            const updatedCrystal = await db.collection('user_crystals').updateOne(
                 {
                     user_id: new ObjectId(session.user._id),
-                    crystal_id: new ObjectId(crystalData._id),
+                    crystal_id: crystalData._id,
                 },
                 {
                     $set: {
                         user_id: new ObjectId(session.user._id),
-                        crystal_id: new ObjectId(crystalData._id),
-                        custom_name: '',
-                        custom_nickname: '',
-                        notes: '',
+                        crystal_id: crystalData._id,
                         collections,
                     }
                 },
@@ -49,9 +45,7 @@ export default async function createCollection(req: NextApiRequest, res: NextApi
                 }
             )
 
-            console.log(userCrystal)
-
-            res.status(200).json({ success: true, data: userCrystal })
+            res.status(200).json({ success: true, data: updatedCrystal })
 
             break
 

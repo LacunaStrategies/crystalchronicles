@@ -1,67 +1,104 @@
-import { ICollectionCheckbox, ICrystalCollection } from '@/types/CrystalCollection'
+import { ICheckbox, ICrystalCollection } from '@/types/CrystalCollection'
 import { X } from 'lucide-react'
 import { useEffect, useState, Dispatch, SetStateAction } from 'react'
 import { toast } from 'react-hot-toast'
 import Checkbox from '../ui/checkbox'
-import { Crystal } from '@/types/Crystal'
+import { ICrystal, IUserCrystal } from '@/types/Crystal'
+import Link from 'next/link'
 
 interface Props {
-    crystalData: Crystal
+    crystalData: ICrystal
     setShowModal: Dispatch<SetStateAction<boolean>>
 }
 
 export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModal }) => {
 
-    const [collectionsCheckboxes, setCollectionsCheckboxes] = useState<ICollectionCheckbox[] | []>([])
+    const [collections, setCollections] = useState<ICrystalCollection[] | []>([])
+    const [userCrystal, setUserCrystal] = useState<IUserCrystal | null>(null)
+    const [checkboxes, setCheckboxes] = useState<ICheckbox[] | []>([])
+    const [changesExist, setChangesExist] = useState(false)
+
     const [processing, setProcessing] = useState(false)
     const [loading, setLoading] = useState(true)
 
+    // Load Current Available Collections
     useEffect(() => {
         const getCollections = async () => {
             let json
+
+            // TODO: Refactor to remove multiple endpoints
             try {
-                const resp = await fetch('/api/collections/getCollections', { method: 'GET' })
+                const resp = await fetch('/api/collections/getCollections')
                 json = await resp.json()
             } catch (error) {
                 console.error(error)
             }
+
             if (json.success) {
-                const crystalCollections: ICrystalCollection[] | [] = json.data
-
-                setCollectionsCheckboxes(
-                    crystalCollections.map(
-                        collection => (
-                            { ...collection, checked: false }
-                        )
-                    )
-                )
-
+                const data: ICrystalCollection[] | [] = json.data
+                setCollections(data)
             } else {
                 toast.error('An unexpected error occured.')
             }
-            setLoading(false)
         }
+
+        const getUserCrystal = async () => {
+            let json
+
+            // TODO: Refactor to remove multiple endpoints
+            try {
+                const resp = await fetch('/api/crystals/getUserCrystal?crystalId=' + crystalData._id)
+                json = await resp.json()
+            } catch (error) {
+                console.error(error)
+            }
+
+            if (json.success) {
+                const data: IUserCrystal | null = json.data
+                setUserCrystal(data)
+            } else {
+                toast.error('An unexpected error occured.')
+            }
+        }
+
         getCollections()
+        getUserCrystal()
+
+        setLoading(false)
+
     }, [])
 
-    const updateCheckStatus = (i: number) => {
-        setCollectionsCheckboxes(
-            collectionsCheckboxes.map((collection, currentIndex) =>
-                currentIndex === i
-                    ? { ...collection, checked: !collection.checked }
-                    : collection
+    useEffect(() => {
+        setCheckboxes(
+            collections.map(
+                collection => userCrystal?.collections.includes(collection._id) ?
+                    { collectionId: collection._id, name: collection.name, isChecked: true } :
+                    { collectionId: collection._id, name: collection.name, isChecked: false }
+            )
+        )
+    }, [collections, userCrystal])
+
+    const handleCheck = (collectionId: string) => {
+        setChangesExist(true)
+        setCheckboxes(
+            checkboxes.map(
+                checkbox => checkbox.collectionId === collectionId ?
+                    { ...checkbox, isChecked: !checkbox.isChecked } :
+                    checkbox
             )
         )
     }
 
-    const handleAddToCollection = async () => {
+    const handleAddToCollection = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
         setProcessing(true)
 
         let json
         try {
             const resp = await fetch('/api/crystals/addToCollection', {
                 method: 'POST',
-                body: JSON.stringify({ crystalData, collectionsCheckboxes })
+                body: JSON.stringify({ crystalData, checkboxes })
             })
             json = await resp.json()
         } catch (error) {
@@ -69,7 +106,7 @@ export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModa
         }
 
         if (json.success) {
-            toast.success('This crystal has been added to your collection(s)!')
+            toast.success('Your collections have been updated!')
         } else {
             toast.error('An unexpected error occurred!')
         }
@@ -92,30 +129,50 @@ export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModa
 
                 <div className="text-center text-xl uppercase font-medium mb-2">Add To Collection</div>
                 <p className="text-center mb-4">Select the collection(s) to add this crystal to.</p>
-                <form onSubmit={handleAddToCollection}>
-                    <div className="mb-4 flex flex-col items-center justify-center">
-                        {loading ? 'Loading...' : (
-                            collectionsCheckboxes.map((collection, index) => (
-                                <Checkbox
-                                    key={collection._id}
-                                    isChecked={collection.checked}
-                                    checkHandler={() => updateCheckStatus(index)}
-                                    label={collection.name}
-                                    index={index}
-                                />
+
+                {
+                    loading ?
+                        'Loading...' :
+                        checkboxes.length > 0 ?
+                            (
+                                <form onSubmit={handleAddToCollection}>
+                                    <div className="mb-4 flex flex-col items-center justify-center">
+                                        {
+                                            checkboxes.map(
+                                                (checkbox, i) => (
+                                                    <Checkbox
+                                                        key={checkbox.collectionId}
+                                                        isChecked={checkbox.isChecked}
+                                                        checkHandler={() => handleCheck(checkbox.collectionId)}
+                                                        label={checkbox.name}
+                                                        index={i}
+                                                    />
+                                                )
+                                            )
+                                        }
+                                    </div>
+                                    <div className="text-center">
+                                        <button
+                                            disabled={processing || loading || !changesExist}
+                                            className="inline-block transition-all duration-300 py-1.5 px-5 rounded-md bg-fuchsia-800 text-white hover:bg-fuchsia-700 disabled:bg-fuchsia-700/30"
+                                            type="submit"
+                                        >
+                                            {processing ? 'Please wait...' : 'Save'}
+                                        </button>
+                                    </div>
+                                </form>
+                            ) : (
+                                <div className="text-center">
+                                    <p className="text-lg mb-2">No Collections Found...</p>
+                                    <Link
+                                        href="/app/my-collections"
+                                        className="transition duration-300 text-fuchsia-800 hover:text-fuchsia-500"
+                                    >
+                                        Create one now!
+                                    </Link>
+                                </div>
                             )
-                            ))}
-                    </div>
-                    <div className="text-center">
-                        <button
-                            disabled={processing}
-                            className="inline-block transition-all duration-300 py-1.5 px-5 rounded-md bg-fuchsia-800 text-white hover:bg-fuchsia-700 disabled:bg-fuchsia-700/30"
-                            type="submit"
-                        >
-                            {processing ? 'Please wait...' : 'Save'}
-                        </button>
-                    </div>
-                </form>
+                }
             </div>
         </div>
     )

@@ -4,6 +4,8 @@ export interface ICrystalCollection {
     user_id: string
 }
 
-export interface ICollectionCheckbox extends ICrystalCollection {
-    checked: boolean
+export interface ICheckbox {
+    collectionId: string
+    name: string
+    isChecked: boolean
 }
