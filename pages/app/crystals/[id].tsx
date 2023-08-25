@@ -1,13 +1,12 @@
 import { ModalAddToCollection } from "@/components/modals/add-to-collection"
 import AdminLayout from "@/layouts/AdminLayout"
-import { crystals, getCrystal } from "@/lib/mock/crystals"
-import { fakeInsert } from "@/lib/utils"
-import { Crystal } from "@/types/Crystal"
+import { crystals } from "@/lib/mock/crystals"
+import { ICrystal, IUserCrystal } from "@/types/Crystal"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from 'next/router'
 import { useState } from "react"
-interface Props { }
+
 
 export const CrystalPage = () => {
 
@@ -16,7 +15,7 @@ export const CrystalPage = () => {
     const [showModal, setShowModal] = useState(false)
 
     // Page Data :: This will actually be generated from GetStaticPaths and GetStaticParams when moved to DB
-    const crystalData: Crystal | undefined = crystals.find(crystal => crystal._id === router.query.id)
+    const crystalData: ICrystal | undefined = crystals.find(crystal => crystal._id === router.query.id)
 
     if (!crystalData)
         return (

@@ -1,14 +1,14 @@
 import CrystalsGrid from "@/components/crystals-grid"
 import AdminLayout from "@/layouts/AdminLayout"
 import { crystals } from "@/lib/mock/crystals"
-import { Chakra, Crystal, Element, Zodiac } from "@/types/Crystal"
+import { Chakra, ICrystal, Element, Zodiac } from "@/types/Crystal"
 import { useEffect, useState } from 'react'
 import { ListRestart } from "lucide-react"
 
 export const Crystals = () => {
 
     // State Variables
-    const [filteredCrystals, setFilteredCrystals] = useState<Crystal[] | []>([])
+    const [filteredCrystals, setFilteredCrystals] = useState<ICrystal[] | []>([])
     const [filters, setFilters] = useState<{ search: string, chakra: Chakra | '', element: Element | '', zodiac: Zodiac | '' }>({
         search: '',
         chakra: '',
@@ -18,7 +18,6 @@ export const Crystals = () => {
 
     const filterCrystals = () => {
 
-        console.log('filtering crystals...')
         // If no filters are set, return empty array
         if (filters.search === '' && filters.chakra === '' && filters.element === '' && filters.zodiac === '')
             return []
