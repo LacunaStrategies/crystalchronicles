@@ -1,6 +1,6 @@
-import { Crystal } from "@/types/Crystal"
+import { ICrystal } from "@/types/Crystal"
 
-export const crystals: Crystal[] = [
+export const crystals: ICrystal[] = [
     {
         _id: "uuid-1",
         name: "Abalone",
