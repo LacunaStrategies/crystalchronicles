@@ -9,6 +9,7 @@ interface Props {
 
 const CrystalsGrid: React.FC<Props> = ({ crystals }) => {
 
+    
     if (!crystals.length)
         return <p>We were unable to locate the crystals your are looking for! Please refine your search filters and try again.</p>
 
