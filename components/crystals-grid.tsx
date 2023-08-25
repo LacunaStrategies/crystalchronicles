@@ -1,10 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Crystal } from "@/types/Crystal"
+import { ICrystal } from "@/types/Crystal"
 
 interface Props {
-    crystals: Crystal[] | []
+    crystals: ICrystal[] | []
 }
 
 const CrystalsGrid: React.FC<Props> = ({ crystals }) => {
