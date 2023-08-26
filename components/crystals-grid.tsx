@@ -9,7 +9,7 @@ interface Props {
 
 const CrystalsGrid: React.FC<Props> = ({ crystals }) => {
 
-    
+
     if (!crystals.length)
         return <p>We were unable to locate the crystals your are looking for! Please refine your search filters and try again.</p>
 
@@ -17,7 +17,7 @@ const CrystalsGrid: React.FC<Props> = ({ crystals }) => {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-8">
             {
                 crystals.map((crystal) => {
-                    const primaryImg = crystal.images ? crystal.images[0] : "public/assets/images/crystals/image-coming-soon-placeholder.png"
+                    const primaryImg = crystal.images ? crystal.images[0] : "/public/assets/images/crystals/image-coming-soon-placeholder.png"
 
                     return (
                         <div

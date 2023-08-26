@@ -9,11 +9,11 @@ export interface ICrystal {
     images?: string[]
     general_description?: string
     healing_description?: string
-    cleaning_description?: string
+    cleansing_description?: string
     placement_description?: string
     colors?: string[]
     origins?: string[]
-    qualaties?: string[]
+    qualities?: string[]
     chakras?: Chakra[]
     zodiacs?: Zodiac[]
     elements?: Element[]

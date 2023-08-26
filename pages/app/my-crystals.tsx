@@ -1,41 +1,14 @@
 import CrystalsGrid from "@/components/crystals-grid"
 import AdminLayout from "@/layouts/AdminLayout"
-import { Chakra, ICrystal, Element, Zodiac } from "@/types/Crystal"
+import { Chakra, ICrystal, Element, Zodiac, IUserCrystal } from "@/types/Crystal"
 import { useEffect, useState } from 'react'
 import { ListRestart } from "lucide-react"
-import type { GetStaticProps } from "next"
-import clientPromise from "@/lib/mongodb/client"
 
-export const getStaticProps: GetStaticProps = async () => {
-
-    const client = await clientPromise
-    const db = client.db(process.env.MONGODB_DB)
-    const resp = await db.collection('trim_crystals').find().toArray()
-
-    const crystals = resp.map(
-        crystal => (
-            {
-                ...crystal,
-                images: ["/assets/images/crystals/image-coming-soon-placeholder.png"],
-                _id: String(crystal._id)
-            }
-        )
-    )
-
-    return {
-        props: {
-            crystals
-        }
-    }
-}
-
-interface Props {
-    crystals: ICrystal[] | []
-}
-
-export const Crystals = ({ crystals }: Props) => {
+export const MyCrystals = () => {
 
     // State Variables
+    const [trimCrystals, setTrimCrystals] = useState<ICrystal[] | []>([])
+    const [userCrystals, setUserCrystals] = useState<IUserCrystal[] | []>([])
     const [filteredCrystals, setFilteredCrystals] = useState<ICrystal[] | []>([])
     const [filters, setFilters] = useState<{ search: string, chakra: Chakra | '', element: Element | '', zodiac: Zodiac | '' }>({
         search: '',
@@ -51,7 +24,7 @@ export const Crystals = ({ crystals }: Props) => {
             return []
 
         // Return a filtered array
-        const crystalsToReturn = crystals.filter(
+        const crystalsToReturn = trimCrystals.filter(
             // If crystal fails any of the filter checks, exclude it from the array
             (crystal) => {
                 let includeCrystal = true
@@ -69,9 +42,19 @@ export const Crystals = ({ crystals }: Props) => {
     }
 
     useEffect(() => {
+        const getUserCrystals = async () => {
+            const resp = await fetch('/api/crystals/getUserCrystals')
+            const json = await resp.json()
+            setUserCrystals(json.data.userCrystals)
+            setTrimCrystals(json.data.trimCrystals)
+        }
+        getUserCrystals()
+    }, [])
+
+    useEffect(() => {
         const res = filterCrystals()
         setFilteredCrystals(res)
-    }, [filters, crystals])
+    }, [filters, trimCrystals])
 
     const activeFilters = (filters.search === '' && filters.chakra === '' && filters.element === '' && filters.zodiac === '')
         ? false
@@ -161,9 +144,9 @@ export const Crystals = ({ crystals }: Props) => {
                 </div>
 
             </div>
-            <CrystalsGrid crystals={activeFilters ? filteredCrystals : crystals} />
+            <CrystalsGrid crystals={activeFilters ? filteredCrystals : trimCrystals} />
         </AdminLayout>
     )
 }
 
-export default Crystals
+export default MyCrystals
