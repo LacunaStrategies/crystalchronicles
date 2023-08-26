@@ -31,13 +31,12 @@ export default async function createCollection(req: NextApiRequest, res: NextApi
             const updatedCrystal = await db.collection('user_crystals').updateOne(
                 {
                     user_id: new ObjectId(session.user._id),
-                    crystal_id: crystalData._id,
+                    crystal_id: new ObjectId(crystalData._id),
                 },
                 {
                     $set: {
                         user_id: new ObjectId(session.user._id),
-                        crystal_id: crystalData._id,
-                        collections,
+                        crystal_id: new ObjectId(crystalData._id),
                     }
                 },
                 {
