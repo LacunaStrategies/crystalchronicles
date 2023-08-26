@@ -10,14 +10,13 @@ export default async function getUserCrystal(req: NextApiRequest, res: NextApiRe
 
     const { method } = req
     const { crystalId } = req.query
-    
+
     const session = await getServerSession(req, res, authOptions)
     if (!session)
         return res.status(401).json({ message: 'Valid session not found' })
 
     switch (method) {
         case 'GET':
-
 
             const client = await clientPromise
             const db = client.db(process.env.MONGODB_DB)
@@ -28,8 +27,6 @@ export default async function getUserCrystal(req: NextApiRequest, res: NextApiRe
                     crystal_id: crystalId
                 }
             )
-
-            console.log(userCrystal)
 
             res.status(200).json({ success: true, data: userCrystal })
             break
