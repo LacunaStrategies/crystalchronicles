@@ -42,7 +42,8 @@ export default async function createCollection(req: NextApiRequest, res: NextApi
             const newCollection = await db.collection('crystal_collections').insertOne(
                 {
                     user_id: new ObjectId(session.user._id),
-                    name: newCollectionName
+                    name: newCollectionName,
+                    user_crystal_ids: []
                 }
             )
 

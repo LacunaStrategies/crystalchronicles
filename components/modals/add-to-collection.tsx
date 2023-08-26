@@ -14,7 +14,6 @@ interface Props {
 export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModal }) => {
 
     const [collections, setCollections] = useState<ICrystalCollection[] | []>([])
-    const [userCrystal, setUserCrystal] = useState<IUserCrystal | null>(null)
     const [checkboxes, setCheckboxes] = useState<ICheckbox[] | []>([])
     const [changesExist, setChangesExist] = useState(false)
 
@@ -41,28 +40,7 @@ export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModa
                 toast.error('An unexpected error occured.')
             }
         }
-
-        const getUserCrystal = async () => {
-            let json
-
-            // TODO: Refactor to remove multiple endpoints
-            try {
-                const resp = await fetch('/api/crystals/getUserCrystal?crystalId=' + crystalData._id)
-                json = await resp.json()
-            } catch (error) {
-                console.error(error)
-            }
-
-            if (json.success) {
-                const data: IUserCrystal | null = json.data
-                setUserCrystal(data)
-            } else {
-                toast.error('An unexpected error occured.')
-            }
-        }
-
         getCollections()
-        getUserCrystal()
 
         setLoading(false)
 
@@ -71,12 +49,12 @@ export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModa
     useEffect(() => {
         setCheckboxes(
             collections.map(
-                collection => userCrystal?.collections.includes(collection._id) ?
+                collection => collection.user_crystal_ids?.includes(crystalData._id) ?
                     { collectionId: collection._id, name: collection.name, isChecked: true } :
                     { collectionId: collection._id, name: collection.name, isChecked: false }
             )
         )
-    }, [collections, userCrystal])
+    }, [collections])
 
     const handleCheck = (collectionId: string) => {
         setChangesExist(true)
@@ -129,7 +107,6 @@ export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModa
 
                 <div className="text-center text-xl uppercase font-medium mb-2">Add To Collection</div>
                 <p className="text-center mb-4">Select the collection(s) to add this crystal to.</p>
-
                 {
                     loading ?
                         'Loading...' :
