@@ -49,7 +49,7 @@ export const ModalAddToCollection: React.FC<Props> = ({ crystalData, setShowModa
     useEffect(() => {
         setCheckboxes(
             collections.map(
-                collection => collection.user_crystal_ids.includes(crystalData._id) ?
+                collection => collection.user_crystal_ids?.includes(crystalData._id) ?
                     { collectionId: collection._id, name: collection.name, isChecked: true } :
                     { collectionId: collection._id, name: collection.name, isChecked: false }
             )
