@@ -21,7 +21,7 @@ export const CrystalPage = () => {
     }
     
     if (!(typeof id === 'string')) {
-        return id = ''
+        id = ''
     }
     
     useEffect(() => {
