@@ -40,7 +40,7 @@ export const CrystalPage = () => {
         }
 
         getCollectionPageData()
-    }, [])
+    }, [id])
 
 
 
