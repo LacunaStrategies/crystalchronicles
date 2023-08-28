@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { ICrystalCollection } from "@/types/CrystalCollection"
 import { IUserCrystal } from "@/types/Crystal"
 import Image from "next/image"
+import { useRouter } from "next/router"
 
 import comingSoonImg from "@/public/assets/images/crystals/image-coming-soon-placeholder.png"
 
@@ -13,12 +14,20 @@ export const CrystalPage = () => {
     // Hooks
     const [collectionData, setCollectionData] = useState<ICrystalCollection | undefined>(undefined)
     const [crystalData, setCrystalData] = useState<IUserCrystal[] | []>([])
+    const router = useRouter()
+    let { id } = router.query
 
+    if (Array.isArray(id))
+        id = id.join()
+
+    if (!(typeof id === 'string'))
+        return id = ''
+    
     useEffect(() => {
         const getCollectionPageData = async () => {
             let json
             try {
-                const resp = await fetch(`/api/collections/getCollectionPageData?collectionId=64eb93a578ba304f7e26a8e2`)
+                const resp = await fetch(`/api/collections/getCollectionPageData?collectionId=${id}`)
                 json = await resp.json()
             } catch (error) {
                 console.error(error)
