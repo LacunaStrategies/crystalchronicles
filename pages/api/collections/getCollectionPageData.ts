@@ -26,16 +26,9 @@ export default async function getCollection(req: NextApiRequest, res: NextApiRes
 
 
             const collectionData = await db.collection('crystal_collections').findOne({ _id: new ObjectId(collectionId), user_id: new ObjectId(session.user._id) })
+            
             if (!collectionData)
                 return res.status(400).json({ success: false, message: 'No collection found' })
-
-            // const crystalData = await db.collection('user_crystals').find({
-            //     _id: {
-            //         $in: collectionData.user_crystal_ids
-            //     }
-            // }).toArray()
-
-            // console.log(crystalData)
 
             const crystalData = await db.collection('user_crystals').aggregate([
                 {
@@ -49,30 +42,14 @@ export default async function getCollection(req: NextApiRequest, res: NextApiRes
                 {
                     $lookup: {
                         from: 'trim_crystals',
-                        localField: '_id',
-                        foreignField: 'crystal_id',
+                        localField: 'crystal_id',
+                        foreignField: '_id',
                         as: 'trim_crystal',
                     }
                 },
             ]).toArray()
 
-            console.log(crystalData)
-
-            // const userCrystals = await db.collection('user_crystals').find({
-            //     _id: {
-            //         // @ts-ignore
-            //         $in: collectionData.user_crystal_ids
-            //     },
-            //     user_id: new Object(session.user._id)
-            // }).toArray()
-            // const trimCrystals = await db.collection('trim_crystals').find({
-            //     _id: {
-            //         $in: userCrystals.map(crystal => crystal._id)
-            //     }
-            // }).toArray()
-
-
-            res.status(200).json({ success: true, data: {} })
+            res.status(200).json({ success: true, data: {crystalData, collectionData} })
             break
 
         default:

@@ -1,19 +1,18 @@
 import AdminLayout from "@/layouts/AdminLayout"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import clientPromise from "@/lib/mongodb/client"
-import { ObjectId } from "mongodb"
 
 import { ICrystalCollection } from "@/types/CrystalCollection"
-import { GetServerSideProps } from "next"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { IUserCrystal } from "@/types/Crystal"
+import Image from "next/image"
 
-interface Props {
-    collectionData: ICrystalCollection | undefined
-}
+import comingSoonImg from "@/public/assets/images/crystals/image-coming-soon-placeholder.png"
 
-export const CrystalPage = ({ collectionData }: Props) => {
+export const CrystalPage = () => {
+
+    // Hooks
+    const [collectionData, setCollectionData] = useState<ICrystalCollection | undefined>(undefined)
+    const [crystalData, setCrystalData] = useState<IUserCrystal[] | []>([])
 
     useEffect(() => {
         const getCollectionPageData = async () => {
@@ -26,12 +25,15 @@ export const CrystalPage = ({ collectionData }: Props) => {
             }
 
             console.log(json)
+            const { data } = json
+            setCollectionData(data.collectionData)
+            setCrystalData(data.crystalData)
         }
 
         getCollectionPageData()
     }, [])
-    // Hooks
-    const [showModal, setShowModal] = useState(false)
+
+
 
     if (!collectionData)
         return (
@@ -60,11 +62,62 @@ export const CrystalPage = ({ collectionData }: Props) => {
                 <h1 className="text-center text-medium text-4xl uppercase">{collectionData.name}</h1>
             </div>
 
-            <div>
-                <pre>
-                    {/* {JSON.stringify(collectionData, null, 4)} */}
-                </pre>
-            </div>
+            {
+                !crystalData.length ? (
+                    <div className="text-center">
+                        <p className="text-2xl mb-8">This collection doesn't appear to have any crystals added! Add some now?</p>
+                        <Link href="/app/crystals">Search Crystals</Link>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-8">
+                        {
+                            crystalData.map((crystal) => {
+                                const primaryImg = crystal.images ?
+                                    crystal.images[0] :
+                                    crystal.trim_crystal && crystal.trim_crystal[0].images ?
+                                        crystal.trim_crystal[0].images[0] :
+                                        comingSoonImg
+
+                                return (
+                                    <div
+                                        key={crystal._id}
+                                        className="">
+                                        <Link
+                                            key={crystal._id}
+                                            href={`/app/my-crystals/${crystal._id}`}
+                                            className="block transition-all duration-300 text-white/90 hover:text-white font-semibold group p-4 bg-gradient-to-br from-fuchsia-950 to-fuchsia-700 rounded-3xl shadow shadow-black"
+                                        >
+                                            <Image
+                                                src={primaryImg}
+                                                alt={
+                                                    crystal.name ?
+                                                        crystal.name + ' Image' :
+                                                        crystal.trim_crystal ?
+                                                            crystal.trim_crystal[0].name + ' Image' :
+                                                            'Placeholder Image'
+                                                }
+                                                height={250}
+                                                width={250}
+                                                priority
+                                                className="transition-all duration-300 rounded-2xl mx-auto mb-2 scale-95 group-hover:scale-100"
+                                            />
+                                            <span className="inline-block w-full text-center">
+                                                {
+                                                    crystal.name ?
+                                                        crystal.name :
+                                                        crystal.trim_crystal ?
+                                                            crystal.trim_crystal[0].name :
+                                                            ''
+                                                }
+                                            </span>
+                                        </Link>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                )
+            }
         </AdminLayout>
     )
 }

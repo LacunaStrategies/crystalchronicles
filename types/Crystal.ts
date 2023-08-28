@@ -25,4 +25,5 @@ export interface IUserCrystal extends ICrystal {
     crystal_id?: string
     user_id: string
     notes?: string
+    trim_crystal?: [ICrystal]
 }

@@ -9,7 +9,13 @@ import { authOptions } from "../auth/[...nextauth]"
 export default async function getUserCrystal(req: NextApiRequest, res: NextApiResponse) {
 
     const { method } = req
-    const { crystalId } = req.query
+    let { userCrystalId } = req.query
+
+    if (Array.isArray(userCrystalId))
+        userCrystalId = userCrystalId.join()
+
+    if (!(typeof userCrystalId === 'string') || userCrystalId === '')
+        return res.status(400).json({ success: false, message: 'Please enter a valid crystal id' })
 
     const session = await getServerSession(req, res, authOptions)
     if (!session)
@@ -21,14 +27,24 @@ export default async function getUserCrystal(req: NextApiRequest, res: NextApiRe
             const client = await clientPromise
             const db = client.db(process.env.MONGODB_DB)
 
-            const userCrystal = await db.collection('user_crystals').findOne(
+            console.log(userCrystalId)
+            const crystalData = await db.collection('user_crystals').aggregate([
                 {
-                    user_id: new ObjectId(session.user._id),
-                    crystal_id: crystalId
-                }
-            )
+                    $match: {
+                        _id: new ObjectId(userCrystalId)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'trim_crystals',
+                        localField: 'crystal_id',
+                        foreignField: '_id',
+                        as: 'trim_crystal',
+                    }
+                },
+            ]).toArray()
 
-            res.status(200).json({ success: true, data: userCrystal })
+            res.status(200).json({ success: true, data: crystalData })
             break
 
         default:
