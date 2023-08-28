@@ -6,16 +6,13 @@ import { ObjectId } from "mongodb"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../auth/[...nextauth]"
 
-export default async function getUserCrystal(req: NextApiRequest, res: NextApiResponse) {
+export default async function getCollection(req: NextApiRequest, res: NextApiResponse) {
 
     const { method } = req
-    let { userCrystalId } = req.query
+    let { collectionId } = req.query
 
-    if (Array.isArray(userCrystalId))
-        userCrystalId = userCrystalId.join()
-
-    if (!(typeof userCrystalId === 'string') || userCrystalId === '')
-        return res.status(400).json({ success: false, message: 'Please enter a valid crystal id' })
+    if (!(typeof collectionId === 'string') || collectionId === '')
+        return res.status(400).json({ success: false, message: 'Valid collection id is required' })
 
     const session = await getServerSession(req, res, authOptions)
     if (!session)
@@ -27,11 +24,19 @@ export default async function getUserCrystal(req: NextApiRequest, res: NextApiRe
             const client = await clientPromise
             const db = client.db(process.env.MONGODB_DB)
 
-            console.log(userCrystalId)
+
+            const collectionData = await db.collection('crystal_collections').findOne({ _id: new ObjectId(collectionId), user_id: new ObjectId(session.user._id) })
+            
+            if (!collectionData)
+                return res.status(400).json({ success: false, message: 'No collection found' })
+
             const crystalData = await db.collection('user_crystals').aggregate([
                 {
                     $match: {
-                        _id: new ObjectId(userCrystalId)
+                        _id: {
+                            // @ts-ignore
+                            $in: collectionData.user_crystal_ids
+                        }
                     }
                 },
                 {
@@ -44,7 +49,7 @@ export default async function getUserCrystal(req: NextApiRequest, res: NextApiRe
                 },
             ]).toArray()
 
-            res.status(200).json({ success: true, data: crystalData })
+            res.status(200).json({ success: true, data: {crystalData, collectionData} })
             break
 
         default:
