@@ -16,11 +16,13 @@ export const CrystalPage = () => {
 
     let { id } = router.query
 
-    if (Array.isArray(id))
+    if (Array.isArray(id)) {
         id = id.join()
-
-    if (!(typeof id === 'string'))
+    }
+    
+    if (!(typeof id === 'string')) {
         return id = ''
+    }
     
     useEffect(() => {
         const getCollectionPageData = async () => {
