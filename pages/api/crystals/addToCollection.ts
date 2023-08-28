@@ -55,6 +55,8 @@ export default async function createCollection(req: NextApiRequest, res: NextApi
                 }
             )
 
+            if (!userCrystal.ok)
+                return res.status(500).json({ success: false, message: 'An unexpected error occurred' })
 
             // If "Add To" collection ids exist, add user crystal id to associated crystal collections
             const addTo: ObjectId[] = []
@@ -73,7 +75,7 @@ export default async function createCollection(req: NextApiRequest, res: NextApi
                     },
                     {
                         // @ts-ignore
-                        $addToSet: { user_crystal_ids: crystalDataId }
+                        $addToSet: { user_crystal_ids: userCrystal.value._id }
                     }
                 )
             }
@@ -95,7 +97,7 @@ export default async function createCollection(req: NextApiRequest, res: NextApi
                     },
                     {
                         // @ts-ignore
-                        $pull: { user_crystal_ids: crystalDataId }
+                        $pull: { user_crystal_ids: userCrystal.value._id }
                     }
                 )
             }

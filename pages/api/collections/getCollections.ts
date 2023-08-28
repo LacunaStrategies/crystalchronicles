@@ -6,7 +6,7 @@ import { ObjectId } from "mongodb"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../auth/[...nextauth]"
 
-export default async function createCollection(req: NextApiRequest, res: NextApiResponse) {
+export default async function getCollection(req: NextApiRequest, res: NextApiResponse) {
 
     const { method } = req
 
