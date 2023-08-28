@@ -13,6 +13,14 @@ export const CrystalPage = () => {
     const [collectionData, setCollectionData] = useState<ICrystalCollection | undefined>(undefined)
     const [crystalData, setCrystalData] = useState<IUserCrystal[] | []>([])
     const router = useRouter()
+
+    let { id } = router.query
+
+    if (Array.isArray(id))
+        id = id.join()
+
+    if (!(typeof id === 'string'))
+        return id = ''
     
     useEffect(() => {
         const getCollectionPageData = async () => {
@@ -33,13 +41,7 @@ export const CrystalPage = () => {
         getCollectionPageData()
     }, [id])
 
-    let { id } = router.query
-
-    if (Array.isArray(id))
-        id = id.join()
-
-    if (!(typeof id === 'string'))
-        return id = ''
+    
 
     if (!collectionData)
         return (
