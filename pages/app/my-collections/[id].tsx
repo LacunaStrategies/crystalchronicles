@@ -1,12 +1,10 @@
 import AdminLayout from "@/layouts/AdminLayout"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-
+import { useRouter } from "next/router"
 import { ICrystalCollection } from "@/types/CrystalCollection"
 import { IUserCrystal } from "@/types/Crystal"
 import Image from "next/image"
-import { useRouter } from "next/router"
-
 import comingSoonImg from "@/public/assets/images/crystals/image-coming-soon-placeholder.png"
 
 export const CrystalPage = () => {
@@ -15,13 +13,6 @@ export const CrystalPage = () => {
     const [collectionData, setCollectionData] = useState<ICrystalCollection | undefined>(undefined)
     const [crystalData, setCrystalData] = useState<IUserCrystal[] | []>([])
     const router = useRouter()
-    let { id } = router.query
-
-    if (Array.isArray(id))
-        id = id.join()
-
-    if (!(typeof id === 'string'))
-        return id = ''
     
     useEffect(() => {
         const getCollectionPageData = async () => {
@@ -42,7 +33,13 @@ export const CrystalPage = () => {
         getCollectionPageData()
     }, [id])
 
+    let { id } = router.query
 
+    if (Array.isArray(id))
+        id = id.join()
+
+    if (!(typeof id === 'string'))
+        return id = ''
 
     if (!collectionData)
         return (
