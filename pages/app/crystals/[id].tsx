@@ -1,6 +1,6 @@
 import { ModalAddToCollection } from "@/components/modals/add-to-collection"
 import AdminLayout from "@/layouts/AdminLayout"
-import { ICrystal } from "@/types/Crystal"
+import { ICrystal, IUserCrystal } from "@/types/Crystal"
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
@@ -70,7 +70,22 @@ export const CrystalPage = ({ crystalData }: Props) => {
 
     // Hooks
     const [showModal, setShowModal] = useState(false)
+    const [userCrystal, setUserCrystal] = useState<IUserCrystal>(undefined)
 
+    useEffect(() => {
+        const getUserCrystalData = async () => {
+            let json
+            try {
+                const resp = await fetch(`/api/crystals/getUserCrystalByTrim?id=${crystalData._id}`)
+                json = await resp.json()
+            } catch (error) {
+                console.error(error)
+            }
+            setUserCrystal(json.data)
+        }
+        getUserCrystalData()
+    }, [])
+    
     if (!crystalData)
         return (
             <AdminLayout pageName="Crystal Details">
